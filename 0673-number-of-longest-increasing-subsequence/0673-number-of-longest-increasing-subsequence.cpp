@@ -9,8 +9,8 @@ public:
                 if((arr[j]<arr[i])&&(dp[j]+1==dp[i])){
                     ct[i]+=ct[j];
                 }
-                else if(arr[j]<arr[i]){
-                    dp[i]=max(dp[i],1+dp[j]);
+                else if(arr[j]<arr[i]&&(dp[j]+1>dp[i])){
+                    dp[i]=1+dp[j];
                     ct[i]=ct[j];
                 }
             }
