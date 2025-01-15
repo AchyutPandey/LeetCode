@@ -1,34 +1,27 @@
 class Solution {
-private:
-    int cache[501][501][3];
-    int f(vector<vector<int>>& coins, int i, int j, int neu){
-        int n = coins.size();
-        int m = coins[0].size();
-        if(i == n - 1 && j == m - 1){
-            if(neu > 0 && coins[i][j] < 0){
-                return 0;
-            }else{
-                return coins[i][j];
-            }
+    int func(vector<vector<int>>& coins, int i, int j, int att, vector<vector<vector<int>>> &dp){
+        int r=coins.size();
+        int c=coins[0].size();
+        if(i==r-1&&j==c-1){
+            if(att>0&&coins[i][j]<0)return 0;
+            return coins[i][j];
         }
-        if(i >= n || j>= m){
-            return INT_MIN;
+        if(i>=r||j>=c)return -1e9;
+        if(dp[i][j][att]!=INT_MIN)return dp[i][j][att];
+        if(coins[i][j]<0&&att>0){
+            int down= max(coins[i][j]+func(coins, i+1, j, att, dp), func(coins,i+1,j,att-1, dp));
+            int right=max(coins[i][j]+func(coins,i,j+1,att, dp), func(coins,i,j+1,att-1, dp));
+            return dp[i][j][att]=max(right,down);
         }
-        if (cache[i][j][neu] != INT_MIN) {
-            return cache[i][j][neu];
-        }
-        int take = INT_MIN;int nottake = INT_MIN;
-        take = coins[i][j] + max(f(coins, i + 1, j, neu), f(coins, i, j + 1, neu));
-        if(neu > 0 && coins[i][j] < 0)
-            nottake =  max(f(coins, i + 1, j, neu - 1), f(coins, i, j + 1, neu - 1));
-        return cache[i][j][neu] = max(take, nottake);
+        int down= coins[i][j]+func(coins, i+1, j, att, dp);
+        int right=coins[i][j]+func(coins,i,j+1,att, dp); 
+        return dp[i][j][att]=max(right,down);
     }
 public:
     int maximumAmount(vector<vector<int>>& coins) {
-    for (int i = 0; i < 501; ++i)
-        for (int j = 0; j < 501; ++j)
-            for (int k = 0; k < 3; ++k)
-                cache[i][j][k] = INT_MIN;
-        return f(coins, 0, 0, 2);
+        int r=coins.size();
+        int c=coins[0].size();
+        vector<vector<vector<int>>> dp(r, vector<vector<int>> (c, vector<int> (3,INT_MIN)));
+        return func(coins,0,0,2, dp);
     }
 };
